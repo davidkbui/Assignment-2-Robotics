@@ -1,8 +1,7 @@
+dobot = DobotSpawn();
+dobot.PlotAndColourRobot();
+
+q = zeros(1,5)
 
 
-hold on
-
-PlaceObject('greenBrick.ply',[0 0 0])
-
-axis equal
-camlight
+dobot.model.teach
