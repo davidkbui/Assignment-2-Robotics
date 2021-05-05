@@ -1,0 +1,16 @@
+dobot = DobotSpawn();
+dobot.PlotAndColourRobot();
+
+q = zeros(1,5)
+
+dobot.moveJoints(pi/4,pi/4,pi/4,pi/4,pi/4)
+
+dobot.model.teach
+
+Acknowledging where you went wrong 
+
+Not all relationships start off smoothly and 
+
+And that's fine. If you're acknowledging your issues than it's part of the healing process. I will continue to be
+
+And that's fine. Acknowledging 

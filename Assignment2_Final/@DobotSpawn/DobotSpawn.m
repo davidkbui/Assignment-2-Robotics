@@ -3,6 +3,8 @@ classdef DobotSpawn < handle
         model;
         workspace = [-1 1 -1 1 -1 1];
         name = 'Dobot';
+        eStop = false;
+        q = zeros(1,5);
         qNeutral = [0,deg2rad(45),deg2rad(90),deg2rad(45),0];
         qSimulation = [0,deg2rad(45),deg2rad(90),deg2rad(45)];
     end
@@ -15,6 +17,7 @@ classdef DobotSpawn < handle
         %%
         % joint limits differ with different documentation
         function SpawnDobot(self,location)
+            self.eStop = false;
             pause(0.001);
             name = [self.name];
             L1 = Link('d',0.137,'a',0,'alpha',-pi/2,'offset',0,'qlim',[deg2rad(-135),deg2rad(135)]);
@@ -55,8 +58,78 @@ classdef DobotSpawn < handle
                     continue;
                 end
             end
-        end 
-
+        end
+        %% Dobot move joints
+        %% E-Stop
+        function StopCheck(self)
+            while(self.eStop == true)
+                disp('E-stop pressed');
+                pause(0.05);
+            end;
+        end
+        
+        function moveJoints(self, q1, q2, q3, q4, q5)
+            if(self.eStop == false)
+                qMove = [q1 q2 q3 q4 q5];
+                
+                self.model.animate(qMove);
+                drawnow();
+            end
+        end
+        
+                function moveEndEffector(self,x,y,z)
+                    steps = 100;
+                    
+                    startEndEffector = self.model.getpos();
+                    %startEndEffector = self.model.fkine(startPose);
+                   
+                    endTransl = transl(x,y,z);
+                    endEndEffector = self.model.ikcon(endTransl,self.q)
+                    
+                    robotTraj = jtraj(startEndEffector,endEndEffector,steps);
+                    
+                    disp('moving robot');
+                    pause;
+                    
+                    for i = 1:steps
+                        animate(self.model,robotTraj(i,:));
+                        drawnow();
+                    end
+                end
+        
+        function spawnPointCloud(self)
+            qlim = self.model.qlim
+            stepRads = deg2rad(60);
+            pointCloudeSize = prod(floor((qlim(1:5,2)-qlim(1:5,1))/stepRads + 1));
+            pointCloud = zeros(pointCloudeSize,3);
+            counter = 1;
+            
+            for q1 = qlim(1,1):stepRads:qlim(1,2)
+                for q2 = qlim(2,1):stepRads:qlim(2,2)
+                    for q3 = qlim(3,1):stepRads:qlim(3,2)
+                        for q4 = qlim(4,1):stepRads:qlim(4,2)
+                            for q5 = qlim(5,1):stepRads:qlim(5,2)
+                                    q = [q1,q2,q3,q4,q5];
+                                    tr = self.model.fkine(q);                        
+                                    pointCloud(counter,:) = tr(1:3,4)';
+                                    counter = counter + 1; 
+                                    if mod(counter/pointCloudeSize * 100,1) == 0
+                                        display(['After ',num2str(toc),' seconds, completed ',num2str(counter/pointCloudeSize * 100),'% of poses']);
+                                    end
+                            end
+                        end
+                    end
+                end
+            end  
+            
+            for i = 1:pointCloudeSize
+                if  pointCloud(i,3) < 0.904
+                    pointCloud(i,3) = 0.904;
+                end 
+            end
+            
+            plot3(pointCloud(:,1),pointCloud(:,2),pointCloud(:,3),'r.');
+        end         
 
     end
 end
