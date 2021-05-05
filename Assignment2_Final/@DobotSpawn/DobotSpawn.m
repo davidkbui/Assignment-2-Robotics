@@ -77,25 +77,24 @@ classdef DobotSpawn < handle
             end
         end
         
-                function moveEndEffector(self,x,y,z)
-                    steps = 100;
+        function moveEndEffector(self,x,y,z)
+            steps = 100;
                     
-                    startEndEffector = self.model.getpos();
-                    %startEndEffector = self.model.fkine(startPose);
+            startEndEffector = self.model.getpos();
                    
-                    endTransl = transl(x,y,z);
-                    endEndEffector = self.model.ikcon(endTransl,self.q)
+            endTransl = transl(x,y,z);
+            endEndEffector = self.model.ikcon(endTransl,self.q)
                     
-                    robotTraj = jtraj(startEndEffector,endEndEffector,steps);
+            robotTraj = jtraj(startEndEffector,endEndEffector,steps);
                     
-                    disp('moving robot');
-                    pause;
+            disp('moving robot');
+            pause;
                     
-                    for i = 1:steps
-                        animate(self.model,robotTraj(i,:));
-                        drawnow();
-                    end
-                end
+            for i = 1:steps
+                animate(self.model,robotTraj(i,:));
+                drawnow();
+            end
+        end
         
         function spawnPointCloud(self)
             qlim = self.model.qlim
