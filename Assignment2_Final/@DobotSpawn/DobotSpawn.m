@@ -97,37 +97,44 @@ classdef DobotSpawn < handle
         end
         
         function spawnPointCloud(self)
-            qlim = self.model.qlim
-            stepRads = deg2rad(60);
-            pointCloudeSize = prod(floor((qlim(1:5,2)-qlim(1:5,1))/stepRads + 1));
-            pointCloud = zeros(pointCloudeSize,3);
-            counter = 1;
             
-            for q1 = qlim(1,1):stepRads:qlim(1,2)
-                for q2 = qlim(2,1):stepRads:qlim(2,2)
-                    for q3 = qlim(3,1):stepRads:qlim(3,2)
-                        for q4 = qlim(4,1):stepRads:qlim(4,2)
-                            for q5 = qlim(5,1):stepRads:qlim(5,2)
-                                    q = [q1,q2,q3,q4,q5];
-                                    tr = self.model.fkine(q);                        
-                                    pointCloud(counter,:) = tr(1:3,4)';
-                                    counter = counter + 1; 
-                                    if mod(counter/pointCloudeSize * 100,1) == 0
-                                        display(['After ',num2str(toc),' seconds, completed ',num2str(counter/pointCloudeSize * 100),'% of poses']);
-                                    end
+            stepRads = deg2rad(60);         % Decrease angle to ge more accurate results
+                qlim = self.model.qlim;
+                % Don't need to worry about joint 6
+                pointCloudSize = prod(floor((qlim(1:5,2)-qlim(1:5,1))/stepRads + 1));
+                pointCloud = zeros(pointCloudSize,3);
+                
+                counter = 1;
+                tic
+
+                for q1 = qlim(1,1):stepRads:qlim(1,2)
+                    for q2 = qlim(2,1):stepRads:qlim(2,2)
+                        for q3 = qlim(3,1):stepRads:qlim(3,2)
+                            for q4 = qlim(4,1):stepRads:qlim(4,2)
+                                for q5 = qlim(5,1):stepRads:qlim(5,2)
+                                    % Don't need to worry about joint 6, just assume it=0
+                                        qFinal = [q1,q2,q3,q4,q5];
+                                        tr = self.model.fkine(qFinal);                        
+                                        pointCloud(counter,:) = tr(1:3,4)';
+                                        counter = counter + 1; 
+                                        if mod(counter/pointCloudSize * 100,1) == 0
+                                            disp(['After ',num2str(toc),' seconds, completed ',num2str(counter/pointCloudSize * 100),'% of poses']);
+                                        end
+                                end
                             end
                         end
                     end
                 end
-            end  
-            
-            for i = 1:pointCloudeSize
-                if  pointCloud(i,3) < 0.904
-                    pointCloud(i,3) = 0.904;
-                end 
-            end
-            
-            plot3(pointCloud(:,1),pointCloud(:,2),pointCloud(:,3),'r.');
+
+                % To only plot UR3 values ABOVE the table (z = 0.904)
+                %for i = 1:pointCloudSize
+                %    if  pointCloud(i,3) < 0.904
+                %        pointCloud(i,3) = 0.904;
+                %    end 
+                %end
+                
+                disp('plotting point cloud');
+                plot3(pointCloud(:,1),pointCloud(:,2),pointCloud(:,3),'r.');
         end         
 
     end
