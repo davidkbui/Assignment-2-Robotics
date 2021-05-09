@@ -135,7 +135,46 @@ classdef DobotSpawn < handle
                 
                 disp('plotting point cloud');
                 plot3(pointCloud(:,1),pointCloud(:,2),pointCloud(:,3),'r.');
-        end         
+        end
+        
+        %         function spawnPointCloud(self)
+%             qlim = self.model.qlim;
+%             stepRads = deg2rad(60);
+%             if self.model.n == 5
+%                 
+%                 pointCloudeSize = prod(floor((qlim(1:4,2)-qlim(1:4,1))/stepRads + 1));
+%                 pointCloud = zeros(pointCloudeSize,3);
+%                 counter = 1;
+%                 tic %this was missing I think
+%                 
+%                 for q1 = qlim(1,1):stepRads:qlim(1,2)
+%                     for q2 = qlim(2,1):stepRads:qlim(2,2)
+%                         for q3 = qlim(3,1):stepRads:qlim(3,2)
+%                             for q4 = qlim(4,1):stepRads:qlim(4,2)
+%                                 q5 = 0 %i think we can make this zero because its for the gripper??
+%                                 q = [q1,q2,q3,q4,q5];
+%                                 tr = self.model.fkine(q);
+%                                 pointCloud(counter,:) = tr(1:3,4)';
+%                                 counter = counter + 1;
+%                                 if mod(counter/pointCloudeSize * 100,1) == 0
+%                                     display(['After ',num2str(toc),' seconds, completed ',num2str(counter/pointCloudeSize * 100),'% of poses']);
+%                                 end
+%                                 
+%                             end
+%                         end
+%                     end
+%                 end
+%             
+%                 for i = 1:pointCloudeSize
+%                     if  pointCloud(i,3) < 0.904
+%                         pointCloud(i,3) = 0.904;
+%                     end
+%                 end
+%             end
+%             
+%             plot3(pointCloud(:,1),pointCloud(:,2),pointCloud(:,3),'r.');
+%         end
+
 
     end
 end
