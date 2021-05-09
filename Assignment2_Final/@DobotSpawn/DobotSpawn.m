@@ -113,6 +113,7 @@ classdef DobotSpawn < handle
                             for q4 = qlim(4,1):stepRads:qlim(4,2)
                                 for q5 = qlim(5,1):stepRads:qlim(5,2)
                                     % Don't need to worry about joint 6, just assume it=0
+                                    % I thought that joint five was the joint that controlled the gripper but that it would be 360
                                         qFinal = [q1,q2,q3,q4,q5];
                                         tr = self.model.fkine(qFinal);                        
                                         pointCloud(counter,:) = tr(1:3,4)';
