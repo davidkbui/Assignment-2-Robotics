@@ -1,5 +1,6 @@
 % spawnEnvironment();
-yellowBrick();
+addpath('New_bricks');
+ yellowBrick();
 
 
 
@@ -51,7 +52,8 @@ function [] = yellowBrick()
 
 hold on
 
-PlaceObject('yellowBrick.ply',[0 0 0]);
+% surf([-3,-3;3,3],[-3,3;-3,3],[0.01,0.01;0.01,0.01],'CData',imread('hardwood-floor.jpeg'),'FaceColor','texturemap');
+PlaceObject('2x4_yellow.ply',[0 0 0]);
 axis equal
 camlight
 end
