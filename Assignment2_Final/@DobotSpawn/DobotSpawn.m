@@ -68,9 +68,9 @@ classdef DobotSpawn < handle
             end;
         end
         
-        function moveJoints(self, q1, q2, q3, q4, q5)
+        function moveJoints(self, qMove)
             if(self.eStop == false)
-                qMove = [q1 q2 q3 q4 q5];
+                self.model.fkine(qMove);
                 
                 self.model.animate(qMove);
                 drawnow();
@@ -98,9 +98,12 @@ classdef DobotSpawn < handle
             disp('done');
         end
         
+        function moveBase(self,x,y,z,rot)
+            self.model.base = self.model.base * trotz(deg2rad(rot)) * transl([x y z]);
+        end
+        
         function spawnPointCloud(self)
-            
-            stepRads = deg2rad(60);         
+            stepRads = deg2rad(60);         % Decrease angle to ge more accurate results
                 qlim = self.model.qlim;
                 pointCloudSize = prod(floor((qlim(1:5,2)-qlim(1:5,1))/stepRads + 1));
                 pointCloud = zeros(pointCloudSize,3);
@@ -136,7 +139,7 @@ classdef DobotSpawn < handle
                 
                 disp('plotting point cloud');
                 plot3(pointCloud(:,1),pointCloud(:,2),pointCloud(:,3),'r.');
-        end         
+        end
 
     end
 end

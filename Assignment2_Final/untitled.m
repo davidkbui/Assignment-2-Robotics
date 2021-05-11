@@ -30,10 +30,11 @@ PlaceObject('container_yellow.ply',[1.15,-0.3,0.225]);
 
 %%
 
-% dobot.spawnPointCloud()
+hold on
 
 dobot = DobotSpawn();
 dobot.PlotAndColourRobot();
+
 
 dobot.model.base = dobot.model.base * trotz(pi) * transl([-1 0 0]);
 
@@ -41,10 +42,8 @@ dobot.moveJoints(pi/4,pi/4,pi/4,pi/4,pi/4)
 
 dobot.model.teach();
 
-% dobot.moveEndEffector(-1,-1,-1);
 
 
+%%
 
-%% Environment 
 
-PlaceObject('2x2_green.ply',[0,0,0.2]);
