@@ -83,9 +83,11 @@ classdef DobotSpawn < handle
             startEndEffector = self.model.getpos();
                    
             endTransl = transl(x,y,z);
-            endEndEffector = self.model.ikcon(endTransl,self.qNeutral)
+            EndEffector = self.model.ikcon(endTransl,self.qNeutral)
                     
-            robotTraj = jtraj(startEndEffector,endEndEffector,steps);
+            robotTraj = jtraj(startEndEffector,EndEffector,steps);
+            
+            EndEffector = rad2deg(EndEffector)
                     
             disp('moving robot');
             pause;
