@@ -89,7 +89,7 @@ classdef DobotSpawn < handle
             
             EndEffector = rad2deg(EndEffector)
                     
-            disp('moving robot');
+            disp('moving robot, press to continue');
             pause;
                     
             for i = 1:steps
