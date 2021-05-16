@@ -24,8 +24,8 @@ while(counter < 20000)
     step(videoplayer, frame);               
     looptime(counter)=toc; 
 
-    while(looptime(idx)<0.15) 
-        looptime(idx)=toc;
+    while(looptime(counter)<0.15) 
+        looptime(counter)=toc;
     end  
     tic;
 end
