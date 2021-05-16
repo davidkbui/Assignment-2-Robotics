@@ -64,7 +64,7 @@ classdef DobotSpawn < handle
             while(self.eStop == true)
                 disp('E-stop pressed');
                 pause(0.05);
-            end;
+            end
         end
         
         function moveJoints(self, qMove)
@@ -78,10 +78,11 @@ classdef DobotSpawn < handle
         
         function moveEndEffector(self,x,y,z)
             steps = 100;
+            offset = 0.1;
                     
             startEndEffector = self.model.getpos();
                    
-            endTransl = transl(x,y,z);
+            endTransl = transl(x,y,z+offset);
                     
             robotTraj = jtraj(startEndEffector,self.model.ikcon(endTransl,self.qSimulation),steps);
             
@@ -97,7 +98,11 @@ classdef DobotSpawn < handle
                 drawnow();
             end
             
-            disp('done');
+            if (endEffectorPos(3,3) < 0.4)
+                endEffectorPos(3,3) = endEffectorPos(3,3) + 0.02
+            end
+            
+            disp('Done, moving to next location');
             % self.getEndEffectorPos();
         end
         

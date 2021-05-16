@@ -4,10 +4,12 @@ classdef Simulation < handle
         trajSteps;
         robot;
         environment;
+        estop = false;
         
         brickPoseMatrix = [];
         randBrickMatrix = [];
         brickVertices = [];
+        brickPlotMatrix = [];
         brickNo = 1;
         
         yellowx = -0.2
@@ -21,17 +23,18 @@ classdef Simulation < handle
             self.initialised = false
             self.trajSteps = 100;
             
-            disp("===========[Welcome to the Lego Sorting System]===========");
-            disp("");
+            disp("|===========[Welcome to the Lego Sorting System]===========|");
+            fprintf("\n");
             disp("Press 1. Initialise Properties then 2.Initialise Simulation");
             disp("to simulate the environment");
+            fprintf("\n\n");
         end
         
         function getBrickNo(self)
-            disp(self.brickNo);
+            fprintf("Number of bricks selected: %d\n\n", self.brickNo);
             
-            X = 0.05:0.01:0.6;
-            Y = -0.5:0.02:0.5;
+            X = 0.08:0.01:0.6;
+            Y = -0.3:0.02:0.3;
             
             for i=1:self.brickNo
                 brickPose = [X(randi([1,numel(X)])) Y(randi([1,numel(Y)])) 0.225];
@@ -44,16 +47,27 @@ classdef Simulation < handle
         function spawnBricks(self)
             %brick1 = blue, brick2 = green, brick3 = yellow, brick4 = red
             % 2628 vertices
+            % 2628, 5256, 7884, 10512, 13140, 15768, 18396, 21024, 23652
+            
             a = 1;
             hold on
             for i=1:self.brickNo
-                disp(size(self.brickVertices));
+                % disp(size(self.brickVertices));
                 brickPlot = PlaceObject(['brick',num2str(self.randBrickMatrix(a,:)),'.ply'],self.brickPoseMatrix(a,:));
+                
+                self.brickPlotMatrix = [self.brickPlotMatrix;brickPlot];
                
                 self.brickVertices = [self.brickVertices;get(brickPlot,'Vertices')];
                 % disp(size(self.brick_vertices);
                 a = a+1;
             end
+        end
+        
+        function estopPress(self)
+            if self.estop
+            self.estop = false;
+            end
+            disp(self.estop);
         end
         
         function init(self)
@@ -65,9 +79,13 @@ classdef Simulation < handle
             self.robot = DobotSpawn();
             self.robot.PlotAndColourRobot();
             
+            disp("Dobot Magician spawned...");
+            
             self.environment = Environment();
             
             self.spawnBricks();
+            
+            disp("Environment created...");
             
             qMove = [pi/4 pi/4 pi/4 pi/4 pi/4];
             
@@ -77,21 +95,30 @@ classdef Simulation < handle
         end
         
         function moveBricks(self)
-            a = 0;
-            a = a+1
-            for i=1:self.brickNo
-                fprintf('Moving brick %d.(\n', a);
-                x = self.brickPoseMatrix(a,1);
-                y = self.brickPoseMatrix(a,2);
-                z = self.brickPoseMatrix(a,3);
+            while ~self.estop
+                if self.estop
+                    return
+                end
+                a = 0;
+                a = a+1
+                for i=1:self.brickNo
+                    disp(self.estop);
+                    if self.estop
+                        return
+                    end
+                    fprintf('Moving brick %d.(\n', a);
+                    x = self.brickPoseMatrix(a,1);
+                    y = self.brickPoseMatrix(a,2);
+                    z = self.brickPoseMatrix(a,3);
 
-                self.robot.moveEndEffector(x,y,z);
-                self.detectBrick(self.randBrickMatrix(a,:));
-                a = a+1;
+                    self.robot.moveEndEffector(x,y,z);
+                    self.detectBrick(self.randBrickMatrix(a,:));
+                    a = a+1;
+                end
+
+                %self.robot.moveEndEffector(0.4,0,0.4);
+                %disp('Legos sorted');
             end
-            self.robot.moveEndEffector(0.4,0,0.4);
-            
-            
         end
         
         function detectBrick(self,numBrick)
@@ -105,14 +132,8 @@ classdef Simulation < handle
             elseif (numBrick == 2)
                 self.robot.moveEndEffector(self.yellowx,(self.yellowy-0.5),self.yellowz);
             else
-                self.robot.moveEndEffector(0.4,0.4,0.4);
+                self.robot.moveEndEffector(0.4,0,0.4);
             end
-        end
-        
-        
-        function eStop(self)
-            self.initialised = false;
-            disp("E-stop pressed, press to continue");
         end
         
         function addController(self, id)

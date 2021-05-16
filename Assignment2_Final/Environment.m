@@ -7,7 +7,7 @@ classdef Environment < handle
             addpath('Environment_assets');
             addpath('Environment_assets/New_bricks');
             
-            axisL = 3
+            axisL = 3;
 
             axis([-axisL axisL -axisL axisL 0 axisL]);
 
