@@ -64,7 +64,7 @@ classdef DobotSpawn < handle
             while(self.eStop == true)
                 disp('E-stop pressed');
                 pause(0.05);
-            end;
+            end
         end
         
         function moveJoints(self, qMove)
