@@ -35,9 +35,9 @@ PlaceObject('fence2.ply',[0 -1.2 0]);
 PlaceObject('teddy.ply', [0.8,0,0.28]);
 PlaceObject('stop.ply',[0.3, -0.8,0.28]);
 
-PlaceObject('2x4_red.ply',[0.76,0.2,0.225]);
-yellowBrick = PlaceObject('2x4_yellow.ply',[0.76,0.3,0.225]);
-PlaceObject('2x4_green.ply',[0.9,-0.3,0.225]);
+PlaceObject('red.ply',[0.76,0.2,0.225]);
+yellowBrick = PlaceObject('yellow.ply',[0.76,0.3,0.225]);
+PlaceObject('green.ply',[0.9,-0.3,0.225]);
 
 yellow_vertices = get(yellowBrick,'Vertices')
 

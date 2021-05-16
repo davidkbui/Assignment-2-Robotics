@@ -5,8 +5,7 @@ classdef DobotSpawn < handle
         name = 'Dobot';
         eStop = false;
         q = zeros(1,5);
-        qNeutral = [0,deg2rad(45),deg2rad(90),deg2rad(45),0];
-        qSimulation = [0,deg2rad(45),deg2rad(90),deg2rad(45)];
+        qSimulation = [0,deg2rad(45),deg2rad(90),deg2rad(45),0];
     end
     methods
         %%
@@ -38,7 +37,7 @@ classdef DobotSpawn < handle
             end
 
             % Display robot
-            self.model.plot3d(self.qNeutral,'noarrow','workspace',self.workspace);
+            self.model.plot3d(self.qSimulation,'noarrow','workspace',self.workspace);
             if isempty(findobj(get(gca,'Children'),'Type','Light'))
                 camlight
             end  
@@ -83,14 +82,15 @@ classdef DobotSpawn < handle
             startEndEffector = self.model.getpos();
                    
             endTransl = transl(x,y,z);
-            EndEffector = self.model.ikcon(endTransl,self.qNeutral)
                     
-            robotTraj = jtraj(startEndEffector,EndEffector,steps);
+            robotTraj = jtraj(startEndEffector,self.model.ikcon(endTransl,self.qSimulation),steps);
             
-            EndEffector = rad2deg(EndEffector)
+            disp(self.model.ikcon(endTransl,self.qSimulation))
+            
+            endEffectorPos = self.model.fkine(self.model.getpos);
                     
-            disp('moving robot, press to continue');
-            pause;
+            % disp('moving robot, press to continue');
+            % pause;
                     
             for i = 1:steps
                 animate(self.model,robotTraj(i,:));
@@ -98,10 +98,16 @@ classdef DobotSpawn < handle
             end
             
             disp('done');
+            % self.getEndEffectorPos();
         end
         
         function moveBase(self,x,y,z,rot)
             self.model.base = self.model.base * trotz(deg2rad(rot)) * transl([x y z]);
+        end
+        
+        function getEndEffectorPos(self)
+            endEffectorPos = self.model.fkine(self.model.getpos);
+            disp(endEffectorPos);
         end
         
         function spawnPointCloud(self)
