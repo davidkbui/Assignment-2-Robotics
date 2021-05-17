@@ -32,6 +32,8 @@ classdef Environment < handle
             %PlaceObject('container_yellow.ply',[1.15,-0.3,0.225]);
             
             PlaceObject('firstaid.ply',[2.5,2.5,0]);
+            PlaceObject('DANGER.ply',[-1.9 1.2 1]);
+            PlaceObject('DANGER.ply',[1.3 1.2 1]);
             
             PlaceObject('teddy.ply', [0.9, 0.3,0.28]);
             %indexed out because these ply files are too huge

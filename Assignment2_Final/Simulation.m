@@ -33,7 +33,7 @@ classdef Simulation < handle
         function getBrickNo(self)
             fprintf("Number of bricks selected: %d\n\n", self.brickNo);
             
-            X = 0.08:0.01:0.6;
+            X = 0.08:0.01:0.3;
             Y = -0.3:0.02:0.3;
             
             for i=1:self.brickNo
