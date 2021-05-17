@@ -1,35 +1,38 @@
-classdef DobotSpawn < handle
+classdef Dobot < handle
     properties
         model;
-        workspace = [3 3 -3 3 0 3];
+        workspace = [-3, 3, -3, 3, 0,3];
         name = 'Dobot';
         eStop = false;
         q = zeros(1,5);
         qSimulation = [0,deg2rad(45),deg2rad(90),deg2rad(45),0];
     end
+    
     methods
-        %%
-        function self = DobotSpawn()
+        function self = Dobot()
             location = transl(0, 0, 0.2);
-            SpawnDobot(self,location);
+            self.GetDobot();
+            self.PlotAndColourRobot();
+            
+            drawnow
+            
         end
-        %%
-        % joint limits differ with different documentation
-        function SpawnDobot(self,location)
+        
+        function GetDobot(self,location)
             self.eStop = false;
             pause(0.001);
             name = [self.name];
             L1 = Link('d',0.137,'a',0,'alpha',-pi/2,'offset',0,'qlim',[deg2rad(-135),deg2rad(135)]);
             L2 = Link('d',0,'a',0.1393,'alpha',0,'offset',-pi/2,'qlim',[deg2rad(0),deg2rad(85)]);
             L3 = Link('d',0,'a',0.16193,'alpha',0,'offset',0,'qlim',[deg2rad(-10),deg2rad(95)]);
-            L4 = Link('d',0,'a',0.0597,'alpha',pi/2,'offset',-pi/2,'qlim',[deg2rad(0),deg2rad(90)]);
+            L4 = Link('d',0,'a',0.0597,'alpha',pi/2,'offset',-pi/2,'qlim',[deg2rad(-90),deg2rad(90)]);
             L5 = Link('d',0,'a',0,'alpha',0,'offset',0,'qlim',[deg2rad(-85),deg2rad(85)]);
             self.model = SerialLink([L1 L2 L3 L4 L5], 'name', self.name);
             
             self.model.base = location;
         end
-
-        function PlotAndColourRobot(self)%robot,workspace)
+        
+        function PlotAndCOlourRobot(self)
             for linkIndex = 0:self.model.n
                 [ faceData, vertexData, plyData{linkIndex + 1} ] = plyread(['dobotLink',num2str(linkIndex),'.ply'],'tri'); %#ok<AGROW>
                 self.model.faces{linkIndex+1} = faceData;
@@ -58,8 +61,7 @@ classdef DobotSpawn < handle
                 end
             end
         end
-        %% Dobot move joints
-        %% E-Stop
+        
         function StopCheck(self)
             while(self.eStop == true)
                 disp('E-stop pressed');
@@ -78,11 +80,10 @@ classdef DobotSpawn < handle
         
         function moveEndEffector(self,x,y,z)
             steps = 100;
-            offset = 0.1;
                     
             startEndEffector = self.model.getpos();
                    
-            endTransl = transl(x,y,z+offset);
+            endTransl = transl(x,y,z);
                     
             robotTraj = jtraj(startEndEffector,self.model.ikcon(endTransl,self.qSimulation),steps);
             
@@ -98,11 +99,7 @@ classdef DobotSpawn < handle
                 drawnow();
             end
             
-            if (endEffectorPos(3,3) < 0.4)
-                endEffectorPos(3,3) = endEffectorPos(3,3) + 0.02
-            end
-            
-            disp('Done, moving to next location');
+            disp('done');
             % self.getEndEffectorPos();
         end
         
